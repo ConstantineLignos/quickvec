@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 80
+ignore =
+    # False positives on imports used only in generic type annotations
+    F401
+    # In conflict with modern PEP8, see https://gitlab.com/pycqa/flake8/issues/139
+    W503
+    # Raises false positives on @overload
+    F811
+    # In conflict with PEP8, space is allowed before colon in slicing
+    E203
+    # Disable strict line length check
+    E501
+select = C,E,F,W,B,B9

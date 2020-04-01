@@ -1,5 +1,7 @@
 # QuickVec
 
+[![Build status](https://ci.appveyor.com/api/projects/status/7y8yuh1fh40ir8kh/branch/master?svg=true)](https://ci.appveyor.com/project/ConstantineLignos/quickvec/branch/master)
+
 QuickVec is a simple package to make it easy to work with word embeddings.
 QuickVec supports instantaneous loading of word embeddings after converting
 them to a native SQLite format. QuickVec is designed to do exactly one thing

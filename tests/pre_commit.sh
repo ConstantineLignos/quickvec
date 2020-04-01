@@ -1,5 +1,6 @@
-#! /bin/bash
+#!/usr/bin/env bash
 set -euxo pipefail
+
 files=(quickvec/ tests/ setup.py)
 isort -rc "${files[@]}"
 black "${files[@]}"

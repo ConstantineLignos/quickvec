@@ -32,6 +32,7 @@ def setup_package() -> None:
                 "flake8-bugbear",
                 "mypy==0.770",
                 "tox",
+                "sphinx",
             ],
         },
         classifiers=[

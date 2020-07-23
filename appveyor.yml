@@ -10,11 +10,11 @@ environment:
   # need to be updated as point releases come out.
   matrix:
     - TOXENV: py36
-      LIN_PYTHON: ~/venv3.6.10
+      LIN_PYTHON: ~/venv3.6
     - TOXENV: py37
-      LIN_PYTHON: ~/venv3.7.5
+      LIN_PYTHON: ~/venv3.7
     - TOXENV: py38
-      LIN_PYTHON: ~/venv3.8.2
+      LIN_PYTHON: ~/venv3.8
 
 build: false
 

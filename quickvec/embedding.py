@@ -62,6 +62,7 @@ class WordEmbedding(ABC):
         return iter(self)
 
 
+# TODO: Add docstrings
 class SqliteWordEmbedding(WordEmbedding):
     def __init__(
         self,
@@ -129,7 +130,7 @@ class SqliteWordEmbedding(WordEmbedding):
         self.conn.close()
 
     @classmethod
-    def from_db(cls, db_path: Union[str, os.PathLike]) -> "SqliteWordEmbedding":
+    def open(cls, db_path: Union[str, os.PathLike]) -> "SqliteWordEmbedding":
         try:
             conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
             name, length, dim, data_type_str = conn.execute(
@@ -144,7 +145,7 @@ class SqliteWordEmbedding(WordEmbedding):
         return SqliteWordEmbedding(conn, length, dim, dtype, name)
 
     @classmethod
-    def from_text_format(
+    def convert_text_format_to_db(
         cls,
         embedding_path: Union[str, os.PathLike],
         db_path: Union[str, os.PathLike],
@@ -155,7 +156,7 @@ class SqliteWordEmbedding(WordEmbedding):
         data_type: Union[Type, np.dtype] = np.float32,
         name: Optional[str] = None,
         gzipped_input: Optional[bool] = None,
-    ) -> "SqliteWordEmbedding":
+    ) -> None:
         dtype = np.dtype(data_type)
         if limit is not None and limit <= 0:
             raise ValueError("Limit must be a positive number")
@@ -218,7 +219,6 @@ class SqliteWordEmbedding(WordEmbedding):
                 except ValueError as err:
                     # Figure out which dimension is responsible
                     for idx, val in enumerate(splits[:1]):
-                        pass
                         try:
                             _ = np.array(val, dtype=dtype)
                         except ValueError:
@@ -297,9 +297,8 @@ class SqliteWordEmbedding(WordEmbedding):
         )
         conn.commit()
 
-        # Close and load
+        # Clean up
         conn.close()
-        return SqliteWordEmbedding.from_db(db_path)
 
     @staticmethod
     def _insert_batch(

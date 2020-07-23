@@ -19,9 +19,10 @@ def test_load_basic() -> None:
         with TemporaryDirectory() as tmp_dir:
             db_path = os.path.join(tmp_dir, "tmp.sqlite")
             # Batch size intentionally not aligned with vocabulary size
-            embed = SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 _data_path(filename), db_path, batch_size=2
             )
+            embed = SqliteWordEmbedding.open(db_path)
 
             # Test file is in float32
             expected_dtype = np.dtype(np.float32)
@@ -62,7 +63,7 @@ def test_limit() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with closing(
-            SqliteWordEmbedding.from_text_format(
+            _convert_from_text_and_load(
                 "tests/test_data/word_vectors.vec", db_path, limit=2
             )
         ) as embeds:
@@ -71,7 +72,7 @@ def test_limit() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with closing(
-            SqliteWordEmbedding.from_text_format(
+            _convert_from_text_and_load(
                 "tests/test_data/word_vectors.vec", db_path, limit=1
             )
         ) as embeds:
@@ -80,7 +81,7 @@ def test_limit() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/word_vectors.vec", db_path, limit=0
             )
 
@@ -90,7 +91,7 @@ def test_name() -> None:
         name = "test_name"
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with closing(
-            SqliteWordEmbedding.from_text_format(
+            _convert_from_text_and_load(
                 _data_path("word_vectors.vec"), db_path, name=name
             )
         ) as embeds:
@@ -102,12 +103,12 @@ def test_gzipped() -> None:
     # None is tested in test_load_basic. We're just checking that things don't crash.
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
-        SqliteWordEmbedding.from_text_format(
+        SqliteWordEmbedding.convert_text_format_to_db(
             _data_path("word_vectors.vec"), db_path, gzipped_input=False
         )
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
-        SqliteWordEmbedding.from_text_format(
+        SqliteWordEmbedding.convert_text_format_to_db(
             _data_path("word_vectors.vec.gz"), db_path, gzipped_input=True
         )
 
@@ -116,7 +117,7 @@ def test_gzipped() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(IOError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 _data_path("word_vectors.vec.gz"), db_path, gzipped_input=False
             )
 
@@ -124,28 +125,25 @@ def test_gzipped() -> None:
 def test_overwrite() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
-        SqliteWordEmbedding.from_text_format(
+        SqliteWordEmbedding.convert_text_format_to_db(
             "tests/test_data/word_vectors.vec", db_path
         )
         # Cannot overwrite without specifying it
         with pytest.raises(IOError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/word_vectors.vec", db_path
             )
         # Overwriting works
-        with closing(
-            SqliteWordEmbedding.from_text_format(
-                "tests/test_data/word_vectors.vec", db_path, overwrite=True
-            )
-        ):
-            pass
+        SqliteWordEmbedding.convert_text_format_to_db(
+            "tests/test_data/word_vectors.vec", db_path, overwrite=True
+        )
 
 
 def test_load_bad_dims() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/bad_dims.badvec", db_path
             )
 
@@ -154,14 +152,14 @@ def test_load_bad_vocab_size() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            _convert_from_text_and_load(
                 "tests/test_data/bad_vocab_size1.badvec", db_path
             )
 
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/bad_vocab_size2.badvec", db_path
             )
 
@@ -170,7 +168,7 @@ def test_load_empty_vecs() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/empty.badvec", db_path
             )
 
@@ -179,7 +177,7 @@ def test_load_duplicate_words() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/duplicate_word.badvec", db_path
             )
 
@@ -188,7 +186,7 @@ def test_bad_float() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(ValueError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/bad_float.badvec", db_path
             )
 
@@ -197,7 +195,7 @@ def test_bad_output_path() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "nonexistent", "tmp.sqlite")
         with pytest.raises(IOError):
-            SqliteWordEmbedding.from_text_format(
+            SqliteWordEmbedding.convert_text_format_to_db(
                 "tests/test_data/word_vectors.sqlite", db_path
             )
 
@@ -206,14 +204,14 @@ def test_bad_input_path() -> None:
     with TemporaryDirectory() as tmp_dir:
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
         with pytest.raises(IOError):
-            SqliteWordEmbedding.from_text_format(
-                "tests/test_data/nonexistent.sqlite", db_path
+            SqliteWordEmbedding.convert_text_format_to_db(
+                "tests/test_data/nonexistent.txt", db_path
             )
 
 
 def test_load_empty_db() -> None:
     with pytest.raises(IOError):
-        with closing(SqliteWordEmbedding.from_db("tests/test_data/empty_db.sqlite")):
+        with closing(SqliteWordEmbedding.open("tests/test_data/empty_db.sqlite")):
             pass
 
 
@@ -221,22 +219,18 @@ def test_path_types() -> None:
     with TemporaryDirectory() as tmp_dir:
         vec_path_str = "tests/test_data/word_vectors.vec"
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
-        with closing(SqliteWordEmbedding.from_text_format(vec_path_str, db_path)):
-            pass
+        SqliteWordEmbedding.convert_text_format_to_db(vec_path_str, db_path)
 
     with TemporaryDirectory() as tmp_dir:
         vec_path_path = Path(vec_path_str)
         db_path = os.path.join(tmp_dir, "tmp.sqlite")
-        with closing(SqliteWordEmbedding.from_text_format(vec_path_path, db_path)):
-            pass
+        SqliteWordEmbedding.convert_text_format_to_db(vec_path_path, db_path)
 
     db_path_str = "tests/test_data/word_vectors.sqlite"
-    with closing(SqliteWordEmbedding.from_db(db_path_str)):
-        pass
+    SqliteWordEmbedding.open(db_path_str)
 
     db_path_path = Path(db_path_str)
-    with closing(SqliteWordEmbedding.from_db(db_path_path)):
-        pass
+    SqliteWordEmbedding.open(db_path_path)
 
 
 def test_parse_dims() -> None:
@@ -247,3 +241,10 @@ def test_parse_dims() -> None:
         _parse_header("123.0 456\n")
     with pytest.raises(ValueError):
         _parse_header("3 3 3\n")
+
+
+def _convert_from_text_and_load(
+    text_path, db_path, *args, **kwargs
+) -> SqliteWordEmbedding:
+    SqliteWordEmbedding.convert_text_format_to_db(text_path, db_path, *args, **kwargs)
+    return SqliteWordEmbedding.open(db_path)

@@ -12,7 +12,7 @@ _ACTIONS = (DIM, LENGTH, LENGTH_DIM, VOCAB)
 
 
 def show(action: str, db_path: Union[str, PathLike]) -> None:
-    embed = SqliteWordEmbedding.from_db(db_path)
+    embed = SqliteWordEmbedding.open(db_path)
     if action == DIM:
         print(embed.dim)
     elif action == LENGTH:
@@ -32,3 +32,7 @@ def main() -> None:
     parser.add_argument("db_path")
     args = parser.parse_args()
     show(args.action, args.db_path)
+
+
+if __name__ == "__main__":
+    main()

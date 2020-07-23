@@ -20,6 +20,7 @@ def setup_package() -> None:
         # 3.6 and up, but not Python 4
         python_requires="~=3.6",
         license="MIT",
+        # TODO: Add description
         long_description="",
         install_requires=["numpy"],
         extras_require={
@@ -39,6 +40,8 @@ def setup_package() -> None:
             "Development Status :: 3 - Alpha",
             "License :: OSI Approved :: MIT License",
             "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
         ],
         project_urls={"Source": "https://github.com/ConstantineLignos/quickvec"},
     )

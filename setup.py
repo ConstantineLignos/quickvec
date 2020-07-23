@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 def setup_package() -> None:
     setup(
         name="quickvec",
-        version="0.1.0-dev",
+        version="0.2.0-dev",
         packages=find_packages(include=("quickvec", "quickvec.*")),
         # Package type information
         package_data={"quickvec": ["py.typed"]},

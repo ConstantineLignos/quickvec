@@ -1,6 +1,6 @@
 # QuickVec
 
-[![Build status](https://ci.appveyor.com/api/projects/status/7y8yuh1fh40ir8kh/branch/master?svg=true)](https://ci.appveyor.com/project/ConstantineLignos/quickvec/branch/master)
+[![build](https://github.com/ConstantineLignos/quickvec/actions/workflows/main.yml/badge.svg)](https://github.com/ConstantineLignos/quickvec/actions/workflows/main.yml)
 
 QuickVec is a simple package to make it easy to work with word embeddings.
 QuickVec supports instantaneous loading of word embeddings after converting

@@ -33,7 +33,7 @@ def setup_package() -> None:
             "dev": [
                 "pytest",
                 "pytest-cov",
-                "black==19.10b0",
+                "black==22.3.0",
                 "isort",
                 "flake8",
                 "flake8-bugbear",

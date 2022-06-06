@@ -35,7 +35,7 @@ class WordEmbedding(ABC):
         """Return whether a word has a vector associated with it.
 
         For implementations which can produce a vector for any string,
-        this should always return True. """
+        this should always return True."""
 
     @abstractmethod
     def __getitem__(self, item: str) -> np.ndarray:

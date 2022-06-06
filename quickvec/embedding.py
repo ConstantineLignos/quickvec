@@ -136,11 +136,11 @@ class SqliteWordEmbedding(WordEmbedding):
             name, length, dim, data_type_str = conn.execute(
                 "SELECT * from metadata"
             ).fetchone()
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as err:
             raise IOError(
                 f"File at path {db_path} does not exist or is not a valid "
                 "QuickVec-format database"
-            )
+            ) from err
         dtype = np.dtype(data_type_str)
         return SqliteWordEmbedding(conn, length, dim, dtype, name)
 
@@ -171,8 +171,10 @@ class SqliteWordEmbedding(WordEmbedding):
         # Convert path to string since connect doesn't take a PathLike in 3.6 per mypy
         try:
             conn = sqlite3.connect(str(db_path))
-        except sqlite3.OperationalError:
-            raise IOError(f"Cannot open path {db_path} to create output database")
+        except sqlite3.OperationalError as err:
+            raise IOError(
+                f"Cannot open path {db_path} to create output database"
+            ) from err
 
         if gzipped_input is None:
             gzipped_input = str(embedding_path).endswith(".gz")
@@ -186,11 +188,11 @@ class SqliteWordEmbedding(WordEmbedding):
             # Get header info
             try:
                 vocab_size, dim = _parse_header(next(embeds))
-            except UnicodeDecodeError:
+            except UnicodeDecodeError as err:
                 raise IOError(
                     f"Embedding file {embedding_path} does not appear "
                     "to be a valid UTF-8 file."
-                )
+                ) from err
             if vocab_size == 0 or dim == 0:
                 raise ValueError(
                     f"Cannot load empty embedding: vocabulary {vocab_size}; "
@@ -226,7 +228,7 @@ class SqliteWordEmbedding(WordEmbedding):
                                 f"Could not convert dimension {idx} with value "
                                 f"{repr(val)} to float on line {n_loaded + 1} "
                                 f"for word {repr(word)}"
-                            )
+                            ) from None
                     else:
                         # We shouldn't even be able to reach here, since some dimension
                         # should have failed to convert above. Raise the original
@@ -306,8 +308,8 @@ class SqliteWordEmbedding(WordEmbedding):
     ) -> None:
         try:
             conn.executemany("INSERT INTO embedding VALUES (?, ?)", batch)
-        except sqlite3.IntegrityError:
-            raise ValueError("Duplicate word in embedding file")
+        except sqlite3.IntegrityError as err:
+            raise ValueError("Duplicate word in embedding file") from err
 
 
 def _parse_header(line: str) -> Tuple[int, int]:
@@ -318,5 +320,7 @@ def _parse_header(line: str) -> Tuple[int, int]:
         )
     try:
         return int(splits[0]), int(splits[1])
-    except ValueError:
-        raise ValueError("Embedding length and dimensionality must be integers")
+    except ValueError as err:
+        raise ValueError(
+            "Embedding length and dimensionality must be integers"
+        ) from err

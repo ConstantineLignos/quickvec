@@ -37,8 +37,7 @@ def setup_package() -> None:
                 "isort",
                 "flake8",
                 "flake8-bugbear",
-                "mypy==0.770",
-                "tox",
+                "mypy==0.961",
             ],
         },
         classifiers=[

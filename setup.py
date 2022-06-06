@@ -1,9 +1,15 @@
 #! /usr/bin/env python
 
+from os import path
+
 from setuptools import find_packages, setup
 
 
 def setup_package() -> None:
+    root = path.abspath(path.dirname(__file__))
+    with open(path.join(root, "README.md"), encoding="utf-8") as f:
+        long_description = f.read()
+
     setup(
         name="quickvec",
         version="0.2.0-dev",
@@ -17,11 +23,11 @@ def setup_package() -> None:
                 "quickvec-show=quickvec.show:main",
             ]
         },
-        # 3.6 and up, but not Python 4
-        python_requires="~=3.6",
+        # 3.6 and up
+        python_requires=">=3.6",
         license="MIT",
-        # TODO: Add description
-        long_description="",
+        description="QuickVec: Fast and easy loading and querying of word vectors",
+        long_description=long_description,
         install_requires=["numpy"],
         extras_require={
             "dev": [
@@ -33,7 +39,6 @@ def setup_package() -> None:
                 "flake8-bugbear",
                 "mypy==0.770",
                 "tox",
-                "sphinx",
             ],
         },
         classifiers=[
@@ -42,8 +47,14 @@ def setup_package() -> None:
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Topic :: Scientific/Engineering :: Artificial Intelligence",
         ],
-        project_urls={"Source": "https://github.com/ConstantineLignos/quickvec"},
+        url="https://github.com/ConstantineLignos/quickvec",
+        long_description_content_type="text/markdown",
+        author="Constantine Lignos",
+        author_email="lignos@brandeis.edu",
     )
 
 

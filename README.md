@@ -12,13 +12,9 @@ words.
 
 `pip install quickvec` (requires Python 3.6+)
 
-# Usage
-
-TODO
-
 # Design philosophy
 
-QuickVec was created to support [NERPy](https://pypi.org/project/nerpy),
+QuickVec was created to support [NERPy](https://github.com/ConstantineLignos/nerpy),
 a named entity recognition framework that uses word embeddings for feature
 generation. NERPy originally used gensim, but the time and memory required to
 load a word embedding completely into memory was a large performance

@@ -8,9 +8,11 @@ them to a native SQLite format. QuickVec is designed to do exactly one thing
 well: allow you to quickly load word embeddings and look up the vectors for
 words.
 
+QuickVec requires Python 3.6 and is distributed under the MIT License.
+
 # Installation
 
-`pip install quickvec` (requires Python 3.6+)
+`pip install quickvec`
 
 # Design philosophy
 
